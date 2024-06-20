@@ -1,0 +1,109 @@
+name: 'Helm Charts Deployment'
+
+on:
+  workflow_dispatch:
+    inputs:
+      cluster_env:
+        description: 'Cluster environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - automated-eks-cluster
+          - prod-eks-cluster
+      namespace:
+        description: 'Namespace to deploy to'
+        required: true
+        type: choice
+        options:
+          - falco
+          - logtail
+          - monitoring
+          - kube-system
+      values_file:
+        description: 'Path to the values file'
+        required: true
+        type: choice
+        options:
+          - ./infra-charts-master/_values/ops/grafana.yaml
+          - ./infra-charts-master/_values/dev/falcosidekick.yaml
+          - ./infra-charts-master/_values/dev/falco.yaml
+          - ./infra-charts-master/_values/dev/aws-load-balancer-controller.yaml
+      helm_repo_name:
+        description: 'Name of the Helm repository (e.g., falcosecurity)'
+        required: true
+        type: choice
+        options:
+          - falcosecurity
+          - metrics-server
+          - aws
+      helm_repo_url:
+        description: 'URL of the Helm repository (e.g., https://falcosecurity.github.io/charts)'
+        required: true
+        type: string
+      chart_name:
+        description: 'Name of the Helm chart to install (e.g., falco)'
+        required: true
+        type: choice
+        options:
+          - falco
+          - falcosidekick
+          - metrics-server
+          - aws-load-balancer-controller
+      chart_version:
+        description: 'Version of the Helm chart to install'
+        required: true
+        type: string
+      release_name:
+        description: 'Release name for the Helm chart'
+        required: true
+        type: string
+          
+jobs:
+  Deployment:
+    name: 'Helm Chart Deployment'
+    runs-on: ubuntu-20.04
+    steps:
+      # Checkout in repo
+      - name: Check Out in Charts repo
+        uses: actions/checkout@v2.3.4
+
+      # Configure AWS Credentials
+      - name: 'Configure AWS Credentials'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+
+      # Configure kubectl
+      - name: 'Configure kubectl'
+        run: |
+          aws eks --region us-east-1 update-kubeconfig --name ${{ inputs.cluster_env }}
+          export KUBECONFIG=~/.kube/config
+          
+      # Create Namespace if not exists
+      - name: 'Create Namespace if not exists'
+        run: |
+          kubectl get namespace ${{ inputs.namespace }} || kubectl create namespace ${{ inputs.namespace }}
+          
+      # Add Helm Repository
+      - name: 'Add Helm Repository'
+        run: |
+          helm repo add ${{ inputs.helm_repo_name }} ${{ inputs.helm_repo_url }}
+          
+      # Update Helm Repositories
+      - name: 'Update Helm Repositories'
+        run: |
+          helm repo update
+      # Pull AWS Load Balancer Controller Helm chart
+      - name: 'Pull AWS Load Balancer Controller Helm chart'
+        run: |
+          helm pull aws/aws-load-balancer-controller --version 1.8.1 --untar     
+          
+      # Helm Deployment
+      - name: 'Helm Deployment'
+        run: |
+          helm upgrade --install --atomic --namespace=${{ inputs.namespace }} --timeout 10m -f ${{ inputs.values_file }} ${{ inputs.release_name }} ${{ inputs.helm_repo_name }}/${{ inputs.chart_name }} --version ${{ inputs.chart_version }} --debug --timeout 10m
+  
+
