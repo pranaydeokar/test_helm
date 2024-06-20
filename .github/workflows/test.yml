@@ -18,6 +18,7 @@ on:
           - falco
           - logtail
           - monitoring
+          - kube-system
       values_file:
         description: 'Path to the values file'
         required: true
@@ -26,6 +27,7 @@ on:
           - ./infra-charts-master/_values/ops/grafana.yaml
           - ./infra-charts-master/_values/dev/falcosidekick.yaml
           - ./infra-charts-master/_values/dev/falco.yaml
+          - ./infra-charts-master/_values/dev/aws-load-balancer-controller.yaml
       helm_repo_name:
         description: 'Name of the Helm repository (e.g., falcosecurity)'
         required: true
@@ -33,6 +35,7 @@ on:
         options:
           - falcosecurity
           - metrics-server
+          - aws
       helm_repo_url:
         description: 'URL of the Helm repository (e.g., https://falcosecurity.github.io/charts)'
         required: true
@@ -45,6 +48,7 @@ on:
           - falco
           - falcosidekick
           - metrics-server
+          - aws-load-balancer-controller
       chart_version:
         description: 'Version of the Helm chart to install'
         required: true
