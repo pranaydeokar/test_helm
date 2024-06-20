@@ -66,6 +66,6 @@ jobs:
       # Deployment: we are using helm for deployment on Kubernetes
       - name: 'Helm Deployment'
         run: |
-          aws eks --region eu-west-1 update-kubeconfig --name ${{ inputs.cluster_env }}
+          aws eks --region us-east-1 update-kubeconfig --name ${{ inputs.cluster_env }}
           export KUBECONFIG=~/.kube/config
           helm upgrade --install --atomic --namespace=${{ inputs.namespace }} -f ${{ inputs.values_file }} ${{ inputs.release_name }} ${{ inputs.chartpath }}
