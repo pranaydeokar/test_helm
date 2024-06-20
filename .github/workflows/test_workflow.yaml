@@ -30,7 +30,7 @@ on:
         required: true
         type: choice
         options:
-          - ./_charts/falco
+          - .infra-charts-master/_charts/falco
           - ./_charts/falcosidekick
           - ./_charts/grafana
       release_name:
