@@ -33,6 +33,10 @@ on:
         options:
           - falcosecurity
           - metrics-server
+      helm_repo_url:
+        description: 'URL of the Helm repository (e.g., https://falcosecurity.github.io/charts)'
+        required: true
+        type: string
       chart_version:
         description: 'Version of the Helm chart to install'
         required: true
