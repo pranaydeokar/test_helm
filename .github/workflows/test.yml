@@ -25,14 +25,28 @@ on:
           - ./infra-charts-master/_values/ops/grafana.yaml
           - ./infra-charts-master/_values/dev/falcosidekick.yaml
           - ./infra-charts-master/_values/dev/falco.yaml
-      helm_repo:
-        description: 'Helm repository (e.g., falcosecurity/falco)'
+      helm_repo_name:
+        description: 'Name of the Helm repository (e.g., falcosecurity)'
         required: true
         type: choice
         options:
-          - falcosecurity/falco
-          - falcosecurity/falcosidekick
-          - metrics-server/metrics-server
+          - falcosecurity
+          - metrics-server
+      helm_repo_url:
+        description: 'URL of the Helm repository (e.g., https://falcosecurity.github.io/charts)'
+        required: true
+        type: choice
+        options:
+          - https://falcosecurity.github.io/charts
+          - https://kubernetes-sigs.github.io/metrics-server/
+      chart_name:
+        description: 'Name of the Helm chart to install (e.g., falco)'
+        required: true
+        type: choice
+        options:
+          - falco
+          - falcosidekick
+          - metrics-server
       chart_version:
         description: 'Version of the Helm chart to install'
         required: true
@@ -75,6 +89,11 @@ jobs:
         run: |
           kubectl get namespace ${{ inputs.namespace }} || kubectl create namespace ${{ inputs.namespace }}
           
+      # Add Helm Repository
+      - name: 'Add Helm Repository'
+        run: |
+          helm repo add ${{ inputs.helm_repo_name }} ${{ inputs.helm_repo_url }}
+          
       # Update Helm Repositories
       - name: 'Update Helm Repositories'
         run: |
@@ -83,4 +102,4 @@ jobs:
       # Helm Deployment
       - name: 'Helm Deployment'
         run: |
-          helm upgrade --install --atomic --namespace=${{ inputs.namespace }} -f ${{ inputs.values_file }} ${{ inputs.release_name }} ${{ inputs.helm_repo }} --version ${{ inputs.chart_version }}
+          helm upgrade --install --atomic --namespace=${{ inputs.namespace }} -f ${{ inputs.values_file }} ${{ inputs.release_name }} ${{ inputs.helm_repo_name }}/{{ inputs.chart_name }} --version ${{ inputs.chart_version }}
