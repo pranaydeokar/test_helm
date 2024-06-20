@@ -96,4 +96,7 @@ jobs:
       # Helm Deployment
       - name: 'Helm Deployment'
         run: |
-          helm upgrade --install --atomic --namespace=${{ inputs.namespace }} -f ${{ inputs.values_file }} ${{ inputs.release_name }} ${{ inputs.helm_repo_name }}/${{ inputs.chart_name }} --version ${{ inputs.chart_version }}
+          helm upgrade --install --atomic --namespace=${{ inputs.namespace }} --timeout 10m -f ${{ inputs.values_file }} ${{ inputs.release_name }} ${{ inputs.helm_repo_name }}/${{ inputs.chart_name }} --version ${{ inputs.chart_version }}
+        retries:
+          max-tries: 3
+          delay: 30 
