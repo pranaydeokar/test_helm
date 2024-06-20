@@ -37,6 +37,14 @@ on:
         description: 'URL of the Helm repository (e.g., https://falcosecurity.github.io/charts)'
         required: true
         type: string
+      chart_name:
+        description: 'Name of the Helm chart to install (e.g., falco)'
+        required: true
+        type: choice
+        options:
+          - falco
+          - falcosidekick
+          - metrics-server
       chart_version:
         description: 'Version of the Helm chart to install'
         required: true
@@ -88,4 +96,4 @@ jobs:
       # Helm Deployment
       - name: 'Helm Deployment'
         run: |
-          helm upgrade --install --atomic --namespace=${{ inputs.namespace }} -f ${{ inputs.values_file }} ${{ inputs.release_name }} ${{ inputs.helm_repo_name }} --version ${{ inputs.chart_version }}
+          helm upgrade --install --atomic --namespace=${{ inputs.namespace }} -f ${{ inputs.values_file }} ${{ inputs.release_name }} ${{ inputs.helm_repo_name }}/${{ inputs.chart_name }} --version ${{ inputs.chart_version }}
