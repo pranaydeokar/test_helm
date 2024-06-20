@@ -32,7 +32,7 @@ on:
         options:
           - ./infra-charts-master/_charts/falco
           - ./infra-charts-master/_charts/falcosidekick
-          - ./infra-charts-master/_charts/grafana/grafana
+          - ./infra-charts-master/_charts/grafana
       release_name:
         description: 'Release name for the Helm chart'
         required: true
