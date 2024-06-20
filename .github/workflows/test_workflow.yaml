@@ -24,7 +24,7 @@ on:
         options:
           - ./_values/ops/grafana.yaml
           - ./_values/dev/falcosidekick.yaml
-          - ./_values/dev/falco.yaml
+          - ./infra-charts-master/_values/dev/falco.yaml
       chartpath:
         description: 'Path to the Helm chart'
         required: true
