@@ -1,0 +1,86 @@
+name: 'Helm Charts Deployment'
+on:
+  workflow_dispatch:
+    inputs:
+      cluster_env:
+        description: 'Cluster environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - automated-eks-cluster
+          - prod-eks-cluster
+      namespace:
+        description: 'Namespace to deploy to'
+        required: true
+        type: choice
+        options:
+          - falco
+          - logtail
+          - monitoring
+      values_file:
+        description: 'Path to the values file'
+        required: true
+        type: choice
+        options:
+          - ./infra-charts-master/_values/ops/grafana.yaml
+          - ./infra-charts-master/_values/dev/falcosidekick.yaml
+          - ./infra-charts-master/_values/dev/falco.yaml
+      helm_repo:
+        description: 'Helm repository (e.g., falcosecurity/falco)'
+        required: true
+        type: choice
+        options:
+          - falcosecurity/falco
+          - falcosecurity/falcosidekick
+          - metrics-server/metrics-server
+      chart_version:
+        description: 'Version of the Helm chart to install'
+        required: true
+        type: string
+      release_name:
+        description: 'Release name for the Helm chart'
+        required: true
+        type: choice
+        options:
+          - falco
+          - falcosidekick
+          - grafana
+
+jobs:
+  Deployment:
+    name: 'Helm Chart Deployment'
+    runs-on: ubuntu-20.04
+    steps:
+      # Checkout in repo
+      - name: Check Out in Charts repo
+        uses: actions/checkout@v2.3.4
+
+      # Configure AWS Credentials
+      - name: 'Configure AWS Credentials'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+
+      # Configure kubectl
+      - name: 'Configure kubectl'
+        run: |
+          aws eks --region us-east-1 update-kubeconfig --name ${{ inputs.cluster_env }}
+          export KUBECONFIG=~/.kube/config
+          
+      # Create Namespace if not exists
+      - name: 'Create Namespace if not exists'
+        run: |
+          kubectl get namespace ${{ inputs.namespace }} || kubectl create namespace ${{ inputs.namespace }}
+          
+      # Update Helm Repositories
+      - name: 'Update Helm Repositories'
+        run: |
+          helm repo update
+
+      # Helm Deployment
+      - name: 'Helm Deployment'
+        run: |
+          helm upgrade --install --atomic --namespace=${{ inputs.namespace }} -f ${{ inputs.values_file }} ${{ inputs.release_name }} ${{ inputs.helm_repo }} --version ${{ inputs.chart_version }}
