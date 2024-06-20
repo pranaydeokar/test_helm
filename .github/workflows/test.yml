@@ -35,10 +35,7 @@ on:
       helm_repo_url:
         description: 'URL of the Helm repository (e.g., https://falcosecurity.github.io/charts)'
         required: true
-        type: choice
-        options:
-          - https://falcosecurity.github.io/charts
-          - https://kubernetes-sigs.github.io/metrics-server/
+        type: string
       chart_name:
         description: 'Name of the Helm chart to install (e.g., falco)'
         required: true
