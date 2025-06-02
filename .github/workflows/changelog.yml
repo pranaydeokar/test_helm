@@ -18,13 +18,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update CHANGELOG
         id: changelog
         uses: requarks/changelog-action@v1
         with:
-          token: ${{ secrets.GITHUB }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           excludeTypes: ""
           includeInvalidCommits: false
           tag: ${{ github.ref_name }}
@@ -37,7 +37,7 @@ jobs:
           makeLatest: true
           name: ${{ github.ref_name }}
           body: ${{ steps.changelog.outputs.changes }}
-          token: ${{ secrets.GITHUB }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit CHANGELOG.md
         uses: stefanzweifel/git-auto-commit-action@v5
