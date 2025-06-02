@@ -1,4 +1,3 @@
----
 name: CHANGELOG
 
 on:
@@ -30,8 +29,10 @@ jobs:
           echo "Found tags:"
           echo "$tags"
           current_tag="${{ github.ref_name }}"
-          prev_tag=$(echo "$tags" | grep -v "$current_tag" | head -n 1)
-          echo "prev_tag=$prev_tag" >> "$GITHUB_OUTPUT"
+          echo "Current tag: $current_tag"
+          prev_tag=$(echo "$tags" | grep -v "^${current_tag}$" | head -n 1 || echo "")
+          echo "Previous tag: $prev_tag"
+          echo "prev_tag=$prev_tag" >> $GITHUB_OUTPUT
 
       - name: Update CHANGELOG
         id: changelog
@@ -55,7 +56,7 @@ jobs:
           makeLatest: true
           name: ${{ github.ref_name }}
           body: ${{ steps.changelog.outputs.changes }}
-          token: '${{ secrets.GITHUB }}'
+          token: ${{ secrets.GITHUB }}
 
       - name: Commit CHANGELOG.md
         uses: stefanzweifel/git-auto-commit-action@v5
