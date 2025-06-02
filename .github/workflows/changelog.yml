@@ -8,6 +8,6 @@ on:
 jobs:
   changelog:
     uses: clouddrove/github-shared-workflows/.github/workflows/changelog.yml@master
-    secrets: inherit
+    secrets: ${{ secrets.GITHUB }}
     with:
       branch: 'main'
