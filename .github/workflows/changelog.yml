@@ -1,51 +1,13 @@
-name: CHANGELOG
-
+name: changelog
+permissions: write-all
 on:
+  push:
+    tags:
+      - "*"
   workflow_dispatch:
-    inputs:
-      branch:
-        required: false
-        type: string
-        default: main
-        description: 'Target branch to commit the updated CHANGELOG.md to'
-      tag:
-        required: true
-        type: string
-        description: 'Git tag to use for changelog (e.g. v1.0.0)'
-
 jobs:
-  create_changelog:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Update CHANGELOG
-        id: changelog
-        uses: requarks/changelog-action@v1
-        with:
-          token: ${{ secrets.GITHUB }}
-          excludeTypes: ""
-          includeInvalidCommits: false
-          tag: ${{ github.event.inputs.tag }}
-
-      - name: Create Release
-        uses: ncipollo/release-action@v1.16.0
-        with:
-          allowUpdates: true
-          draft: false
-          makeLatest: true
-          name: ${{ github.event.inputs.tag }}
-          body: ${{ steps.changelog.outputs.changes }}
-          token: ${{ secrets.GITHUB }}
-
-      - name: Commit CHANGELOG.md
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          branch: ${{ github.event.inputs.branch }}
-          commit_user_name: Pranay deokar
-          commit_user_email: pranay.deokar@clouddrove.com
-          commit_author: CloudDrove CI <84795582+clouddrove-ci@users.noreply.github.com>
-          commit_message: 'docs: update CHANGELOG.md for ${{ github.event.inputs.tag }}'
-          file_pattern: CHANGELOG.md
+  changelog:
+    uses: clouddrove/github-shared-workflows/.github/workflows/changelog.yml@master
+    secrets: inherit
+    with:
+      branch: 'main'
