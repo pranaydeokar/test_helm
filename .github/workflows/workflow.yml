@@ -27,7 +27,6 @@ jobs:
         id: changelog
         uses: requarks/changelog-action@v1
         with:
-          fetch-depth: 0
           token: ${{ secrets.GITHUB }}
           excludeTypes: ""
           includeInvalidCommits: false
