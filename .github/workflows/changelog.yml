@@ -1,4 +1,3 @@
----
 name: CHANGELOG
 
 on:
@@ -9,6 +8,10 @@ on:
         type: string
         default: main
         description: 'Target branch to commit the updated CHANGELOG.md to'
+      tag:
+        required: true
+        type: string
+        description: 'Git tag to use for changelog (e.g. v1.0.0)'
 
 jobs:
   create_changelog:
@@ -17,17 +20,15 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update CHANGELOG
         id: changelog
         uses: requarks/changelog-action@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB }}
           excludeTypes: ""
           includeInvalidCommits: false
-          tag: ${{ github.ref_name }}
+          tag: ${{ github.event.inputs.tag }}
 
       - name: Create Release
         uses: ncipollo/release-action@v1.16.0
@@ -35,16 +36,16 @@ jobs:
           allowUpdates: true
           draft: false
           makeLatest: true
-          name: ${{ github.ref_name }}
+          name: ${{ github.event.inputs.tag }}
           body: ${{ steps.changelog.outputs.changes }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB }}
 
       - name: Commit CHANGELOG.md
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          branch: ${{ inputs.branch }}
+          branch: ${{ github.event.inputs.branch }}
           commit_user_name: Pranay deokar
           commit_user_email: pranay.deokar@clouddrove.com
           commit_author: CloudDrove CI <84795582+clouddrove-ci@users.noreply.github.com>
-          commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }}'
+          commit_message: 'docs: update CHANGELOG.md for ${{ github.event.inputs.tag }}'
           file_pattern: CHANGELOG.md
