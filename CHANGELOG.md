@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.8] - 2025-06-03
+### :bug: Bug Fixes
+- [`517d1d8`](https://github.com/pranaydeokar/test_helm/commit/517d1d8d2df2782a2499b7c98fef4b40bc47ebf8) - testing changelog *(commit by [@pranaydeokar](https://github.com/pranaydeokar))*
+- [`eec026f`](https://github.com/pranaydeokar/test_helm/commit/eec026fe837bef1dd02210e290128dfa1f5d3d18) - testing changelog *(commit by [@pranaydeokar](https://github.com/pranaydeokar))*
+
+### :memo: Documentation Changes
+- [`f7f1a75`](https://github.com/pranaydeokar/test_helm/commit/f7f1a7511d1a0034fc01fedc8edc972e671215f0) - update CHANGELOG.md for v1.1.7 *(commit by [@clouddrove-ci](https://github.com/clouddrove-ci))*
+
+
 ## [v1.1.7] - 2025-06-03
 ### :bug: Bug Fixes
 - [`9e3a759`](https://github.com/pranaydeokar/test_helm/commit/9e3a7599fe7e0938aad0b02a9d0e3c636c6a450c) - testing *(commit by [@pranaydeokar](https://github.com/pranaydeokar))*
@@ -31,3 +40,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [v1.1.5]: https://github.com/pranaydeokar/test_helm/compare/v1.1.4...v1.1.5
 [v1.1.6]: https://github.com/pranaydeokar/test_helm/compare/v1.1.5...v1.1.6
 [v1.1.7]: https://github.com/pranaydeokar/test_helm/compare/v1.1.6...v1.1.7
+[v1.1.8]: https://github.com/pranaydeokar/test_helm/compare/v1.1.7...v1.1.8
