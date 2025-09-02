@@ -182,4 +182,3 @@
 #   condition: proc.name in (http_server_binaries) and inbound and fd.sport != 80 and fd.sport != 443
 #   output: "Inbound network traffic to HTTP Server on unexpected port (connection=%fd.name)"
 #   priority: WARNING
-
